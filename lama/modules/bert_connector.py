@@ -11,6 +11,17 @@ import numpy as np
 from lama.modules.base_connector import *
 import torch.nn.functional as F
 
+def load_custom_model(path, checkpoint_fldr_and_bin, regularized=False, device='cuda'):
+    state_dict = torch.load(path + checkpoint_fldr_and_bin, map_location=torch.device(device))
+    keys = state_dict.keys()
+    if regularized:
+        for k in list(keys):
+            if 'bert.' in k:
+                state_dict[k[5:]] = state_dict[k]
+                del state_dict[k]
+    return BertForMaskedLM.from_pretrained(
+        pretrained_model_name_or_path=path,
+        state_dict=state_dict)
 
 class CustomBaseTokenizer(BasicTokenizer):
 
@@ -83,7 +94,7 @@ class Bert(Base_Connector):
 
         # Load pre-trained model (weights)
         # ... to get prediction/generation
-        self.masked_bert_model = BertForMaskedLM.from_pretrained(bert_model_name)
+        self.masked_bert_model = load_custom_model("/home/med/Scrivania/baseline-265000/", "pytorch_model.bin", True, "cpu") #BertForMaskedLM.from_pretrained(bert_model_name)
 
         self.masked_bert_model.eval()
 
