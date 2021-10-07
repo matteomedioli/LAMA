@@ -398,7 +398,7 @@ def main(args, shuffle_data=True, model=None):
 
     logger.info("\n" + ret_msg + "\n")
 
-    print(len(all_samples))
+    print("ALL SAMPLES LEN:", len(all_samples))
 
     # if template is active (1) use a single example for (sub,obj) and (2) ...
     if args.template and args.template != "":
@@ -647,6 +647,7 @@ def main(args, shuffle_data=True, model=None):
 
     # stats
     # Mean reciprocal rank
+    print(list_of_results)
     MRR /= len(list_of_results)
 
     # Precision
