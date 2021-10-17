@@ -11,6 +11,24 @@ import numpy as np
 from lama.modules.base_connector import *
 import torch.nn.functional as F
 
+def cuda_setup():
+    if torch.cuda.is_available():
+
+        # Tell PyTorch to use the GPU.
+        device = torch.device("cuda")
+
+        print('There are %d GPU(s) available.' % torch.cuda.device_count())
+
+        print('We will use the GPU:', torch.cuda.get_device_name(0))
+
+    # If not...
+    else:
+        print('No GPU available, using the CPU instead.')
+        device = torch.device("cpu")
+    return device
+
+cuda_setup()
+
 def load_custom_model(path, checkpoint_fldr_and_bin, regularized=False, device='cuda'):
     state_dict = torch.load(path + checkpoint_fldr_and_bin, map_location=torch.device(device))
     keys = state_dict.keys()
@@ -94,7 +112,7 @@ class Bert(Base_Connector):
 
         # Load pre-trained model (weights)
         # ... to get prediction/generation
-        self.masked_bert_model = load_custom_model("/home/med/Scrivania/baseline-265000/", "pytorch_model.bin", True, "cpu") #BertForMaskedLM.from_pretrained(bert_model_name)
+        self.masked_bert_model = load_custom_model(TOFIX, "pytorch_model.bin", True, "cpu") #BertForMaskedLM.from_pretrained(bert_model_name)
 
         self.masked_bert_model.eval()
 

@@ -647,7 +647,6 @@ def main(args, shuffle_data=True, model=None):
 
     # stats
     # Mean reciprocal rank
-    print(list_of_results)
     MRR /= len(list_of_results)
 
     # Precision

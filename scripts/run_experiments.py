@@ -23,10 +23,17 @@ from collections import defaultdict
 LMs = [
     {
         "lm": "bert",
-        "label": "bert_base",
+        "label": "bert_baseline",
         "models_names": ["bert"],
-        "bert_model_name": "bert-base-uncased",
-        "bert_model_dir": "/home/med/Scrivania/baseline-265000",
+        "bert_model_name": "bert-custom-baseline",
+        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-10000",
+    },
+    {
+        "lm": "bert-regularized",
+        "label": "bert_regularized",
+        "models_names": ["bert"],
+        "bert_model_name": "bert-custom-regularized",
+        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-10000",
     }
 ]
 
@@ -129,7 +136,7 @@ def run_experiments(
     return mean_p1, all_Precision1
 
 
-def get_TREx_parameters(data_path_pre="data/"):
+def get_TREx_parameters(data_path_pre="/data/medioli/lama/data/"):
     relations = load_file("{}relations.jsonl".format(data_path_pre))
     data_path_pre += "TREx/"
     data_path_post = ".jsonl"
@@ -154,19 +161,19 @@ def get_GoogleRE_parameters():
             "template_negated": "[X] did not die in [Y] .",
         },
     ]
-    data_path_pre = "data/Google_RE/"
+    data_path_pre = "/data/medioli/lama/data/Google_RE/"
     data_path_post = "_test.jsonl"
     return relations, data_path_pre, data_path_post
 
 
-def get_ConceptNet_parameters(data_path_pre="data/"):
+def get_ConceptNet_parameters(data_path_pre="/data/medioli/lama/data/"):
     relations = [{"relation": "test"}]
     data_path_pre += "ConceptNet/"
     data_path_post = ".jsonl"
     return relations, data_path_pre, data_path_post
 
 
-def get_Squad_parameters(data_path_pre="data/"):
+def get_Squad_parameters(data_path_pre="/data/medioli/lama/data/"):
     relations = [{"relation": "test"}]
     data_path_pre += "Squad/"
     data_path_post = ".jsonl"
@@ -181,17 +188,17 @@ def run_all_LMs(parameters):
 
 if __name__ == "__main__":
 
-    print("1. Google-RE")
-    parameters = get_GoogleRE_parameters()
-    run_all_LMs(parameters)
+    #print("1. Google-RE")
+    #parameters = get_GoogleRE_parameters()
+    #run_all_LMs(parameters)
 
-    print("2. T-REx")
-    parameters = get_TREx_parameters()
-    run_all_LMs(parameters)
+    #print("2. T-REx")
+    #parameters = get_TREx_parameters()
+    #run_all_LMs(parameters)
 
-    print("3. ConceptNet")
-    parameters = get_ConceptNet_parameters()
-    run_all_LMs(parameters)
+    #print("3. ConceptNet")
+    #parameters = get_ConceptNet_parameters()
+    #run_all_LMs(parameters)
 
     print("4. SQuAD")
     parameters = get_Squad_parameters()
