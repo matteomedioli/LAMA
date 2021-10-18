@@ -19,21 +19,23 @@ import os
 from os.path import isfile, join
 from shutil import copyfile
 from collections import defaultdict
+import sys
 
+print("TESTING CHECKPOINT-"+sys.argv[1])
 LMs = [
     {
         "lm": "bert",
         "label": "bert_baseline",
         "models_names": ["bert"],
         "bert_model_name": "bert-custom-baseline",
-        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-10000",
+        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"+sys.argv[1],
     },
     {
         "lm": "bert-regularized",
         "label": "bert_regularized",
         "models_names": ["bert"],
         "bert_model_name": "bert-custom-regularized",
-        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-10000",
+        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-"+sys.argv[1],
     }
 ]
 
