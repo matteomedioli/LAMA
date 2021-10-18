@@ -101,7 +101,7 @@ def run_experiments(
 
         if model is None:
             [model_type_name] = args.models_names
-            build_model_by_name(model_type_name, args)
+            model = build_model_by_name(model_type_name, args)
 
         Precision1 = run_evaluation(args, shuffle_data=False, model=model)
         print("P@1 : {}".format(Precision1), flush=True)

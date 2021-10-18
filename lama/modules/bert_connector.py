@@ -10,6 +10,7 @@ from pytorch_pretrained_bert import BertTokenizer, BertForMaskedLM, BasicTokeniz
 import numpy as np
 from lama.modules.base_connector import *
 import torch.nn.functional as F
+from os import path
 
 def cuda_setup():
     if torch.cuda.is_available():
@@ -112,7 +113,32 @@ class Bert(Base_Connector):
 
         # Load pre-trained model (weights)
         # ... to get prediction/generation
-        self.masked_bert_model = load_custom_model(TOFIX, "pytorch_model.bin", True, "cpu") #BertForMaskedLM.from_pretrained(bert_model_name)
+        print("Generating config: "+bert_model_name+"bert_config.json")
+        if not path.exists(bert_model_name+"bert_config.json"):
+            with open(bert_model_name+"bert_config.json", "w") as text_file:
+                text_file.write("""{
+    "architectures": [
+    "BertForMaskedLM"
+    ],
+    "attention_probs_dropout_prob": 0.1,
+    "gradient_checkpointing": false,
+    "hidden_act": "gelu",
+    "hidden_dropout_prob": 0.1,
+    "hidden_size": 768,
+    "initializer_range": 0.02,
+    "intermediate_size": 3072,
+    "layer_norm_eps": 1e-12,
+    "max_position_embeddings": 514,
+    "num_attention_heads": 12,
+    "num_hidden_layers": 12,
+    "pad_token_id": 0,
+    "position_embedding_type": "absolute",
+    "transformers_version": "4.5.1",
+    "type_vocab_size": 2,
+    "use_cache": true,
+    "vocab_size": 30522
+}""")
+        self.masked_bert_model = load_custom_model(bert_model_name, "pytorch_model.bin", True, "cpu") #BertForMaskedLM.from_pretrained(bert_model_name)
 
         self.masked_bert_model.eval()
 
