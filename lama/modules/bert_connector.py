@@ -138,7 +138,12 @@ class Bert(Base_Connector):
     "use_cache": true,
     "vocab_size": 30522
 }""")
-        self.masked_bert_model = load_custom_model(bert_model_name, "pytorch_model.bin", True, "cpu") #BertForMaskedLM.from_pretrained(bert_model_name)
+        if args.bert_model_dir is not None:
+            print("Load Custom Model")
+            self.masked_bert_model = load_custom_model(bert_model_name, "pytorch_model.bin", True, "cpu")
+        else:
+            print("Load HuggingFace Model")
+            self.masked_bert_model = BertForMaskedLM.from_pretrained(bert_model_name)
 
         self.masked_bert_model.eval()
 
