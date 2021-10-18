@@ -26,7 +26,7 @@ LMs = [
     {
         # HuggingFace Baseline
         "lm": "bert",
-        "label": "bert_custom_huggingface",
+        "label": "bert_base_uncased",
         "models_names": ["bert"],
         "bert_model_name": "bert-base-uncased",
         "bert_model_dir": None,
