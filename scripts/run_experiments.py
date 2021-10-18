@@ -24,15 +24,24 @@ import sys
 print("TESTING CHECKPOINT-"+sys.argv[1])
 LMs = [
     {
+        # HuggingFace Baseline
         "lm": "bert",
-        "label": "bert_baseline",
+        "label": "bert_custom_huggingface",
         "models_names": ["bert"],
-        "bert_model_name": "bert-custom-baseline",
-        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"+sys.argv[1],
+        "bert_model_name": "bert-base-uncased",
+        "bert_model_dir": None,
+        
     },
     {
-        "lm": "bert-regularized",
-        "label": "bert_regularized",
+        "lm": "bert-custom-baseline",
+        "label": "bert_custom_baseline",
+        "models_names": ["bert"],
+        "bert_model_name": "bert-custom-baseline",
+        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"+sys.argv[1]
+    }
+    {
+        "lm": "bert-custom-regularized",
+        "label": "bert_custom_regularized",
         "models_names": ["bert"],
         "bert_model_name": "bert-custom-regularized",
         "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-"+sys.argv[1],
