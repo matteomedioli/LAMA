@@ -14,33 +14,6 @@ from collections import defaultdict
 import json
 from tqdm import tqdm
 
-LMs = [
-    #{
-    #    # HuggingFace Baseline
-    #    "lm": "bert",
-    #    "label": "bert_base_uncased",
-    #    "models_names": ["bert"],
-    #    "bert_model_name": "bert-base-uncased",
-    #    "bert_model_dir": None,
-    #
-    #},
-    {
-        "lm": "bert-custom-baseline",
-        "label": "bert_custom_baseline",
-        "models_names": ["bert"],
-        "bert_model_name": "bert-custom-baseline",
-        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"
-    },
-    {
-        "lm": "bert-custom-regularized",
-        "label": "bert_custom_regularized",
-        "models_names": ["bert"],
-        "bert_model_name": "bert-custom-regularized",
-        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-"
-    }
-]
-
-
 def run_experiments(
     relations,
     data_path_pre,
@@ -202,6 +175,31 @@ def run_all_LMs(parameters):
     p10_list = {}
     mrr_list = {}
     for i in tqdm(range(10000, 1095000, 10000)):
+        LMs = [
+            # {
+            #    # HuggingFace Baseline
+            #    "lm": "bert",
+            #    "label": "bert_base_uncased",
+            #    "models_names": ["bert"],
+            #    "bert_model_name": "bert-base-uncased",
+            #    "bert_model_dir": None,
+            #
+            # },
+            {
+                "lm": "bert-custom-baseline",
+                "label": "bert_custom_baseline",
+                "models_names": ["bert"],
+                "bert_model_name": "bert-custom-baseline",
+                "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"
+            },
+            {
+                "lm": "bert-custom-regularized",
+                "label": "bert_custom_regularized",
+                "models_names": ["bert"],
+                "bert_model_name": "bert-custom-regularized",
+                "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-"
+            }
+        ]
         for ip in LMs:
             ip["bert_model_dir"] = ip["bert_model_dir"]+str(i)
             print(ip["label"])
