@@ -5,23 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 #
 import argparse
-import os
-import torch
-from transformers import BertForMaskedLM
-
 from batch_eval_KB_completion import main as run_evaluation
 from batch_eval_KB_completion import load_file
 from lama.modules import build_model_by_name
 import pprint
 import statistics
-from os import listdir
-import os
-from os.path import isfile, join
-from shutil import copyfile
 from collections import defaultdict
-import sys
+import json
 
-print("TESTING CHECKPOINT-"+sys.argv[1])
 LMs = [
     #{
     #    # HuggingFace Baseline
@@ -37,14 +28,14 @@ LMs = [
         "label": "bert_custom_baseline",
         "models_names": ["bert"],
         "bert_model_name": "bert-custom-baseline",
-        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"+sys.argv[1]
+        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"
     },
     {
         "lm": "bert-custom-regularized",
         "label": "bert_custom_regularized",
         "models_names": ["bert"],
         "bert_model_name": "bert-custom-regularized",
-        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-"+sys.argv[1],
+        "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-"
     }
 ]
 
@@ -158,7 +149,7 @@ def run_experiments(
             flush=True,
         )
 
-    return (mean_p1, all_Precision1), (mean_p10, all_Precision10), (mean_MRR, all_mrr)
+    return mean_p1, mean_p10, mean_MRR
 
 
 def get_TREx_parameters(data_path_pre="/data/medioli/lama/data/"):
@@ -206,15 +197,20 @@ def get_Squad_parameters(data_path_pre="/data/medioli/lama/data/"):
 
 
 def run_all_LMs(parameters):
-    p1_list = []
-    p10_list = []
-    mrr_list = []
-    for ip in LMs:
-        print(ip["label"])
-        p1, p10, mrr = run_experiments(*parameters, input_param=ip, use_negated_probes=False)
-        p1_list.append(p1)
-        p10_list.append(p10)
-        mrr_list.append(mrr)
+    p1_list = {}
+    p10_list = {}
+    mrr_list = {}
+    for i in range (1000, 1095000, 1000):
+        for ip in LMs:
+            ip["bert_model_dir"] = ip["bert_model_dir"]+str(i)
+            print(ip["label"])
+            p1_list[ip["label"]] = []
+            p10_list[ip["label"]] = []
+            mrr_list[ip["label"]] = []
+            p1, p10, mrr = run_experiments(*parameters, input_param=ip, use_negated_probes=False)
+            p1_list[ip["label"]].append(p1)
+            p10_list[ip["label"]].append(p10)
+            mrr_list[ip["label"]].append(mrr)
     return p1_list, p10_list, mrr_list
 
 
@@ -235,6 +231,9 @@ if __name__ == "__main__":
     print("4. SQuAD")
     parameters = get_Squad_parameters()
     p1, p10, mrr = run_all_LMs(parameters)
-    print(p1)
-    print(p10)
-    print(mrr)
+    with open('result_p1.json', 'w') as fp:
+        json.dump(p1, fp)
+    with open('result_p10.json', 'w') as fp:
+        json.dump(p10, fp)
+    with open('result_mrr.json', 'w') as fp:
+        json.dump(mrr, fp)
