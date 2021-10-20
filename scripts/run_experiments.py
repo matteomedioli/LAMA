@@ -12,6 +12,7 @@ import pprint
 import statistics
 from collections import defaultdict
 import json
+from tqdm import tqdm
 
 LMs = [
     #{
@@ -200,7 +201,7 @@ def run_all_LMs(parameters):
     p1_list = {}
     p10_list = {}
     mrr_list = {}
-    for i in range (1000, 1095000, 1000):
+    for i in tqdm(range(1000, 1095000, 1000)):
         for ip in LMs:
             ip["bert_model_dir"] = ip["bert_model_dir"]+str(i)
             print(ip["label"])
