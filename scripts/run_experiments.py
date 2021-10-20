@@ -23,22 +23,22 @@ import sys
 
 print("TESTING CHECKPOINT-"+sys.argv[1])
 LMs = [
-    {
-        # HuggingFace Baseline
-        "lm": "bert",
-        "label": "bert_base_uncased",
-        "models_names": ["bert"],
-        "bert_model_name": "bert-base-uncased",
-        "bert_model_dir": None,
-        
-    },
+    #{
+    #    # HuggingFace Baseline
+    #    "lm": "bert",
+    #    "label": "bert_base_uncased",
+    #    "models_names": ["bert"],
+    #    "bert_model_name": "bert-base-uncased",
+    #    "bert_model_dir": None,
+    #
+    #},
     {
         "lm": "bert-custom-baseline",
         "label": "bert_custom_baseline",
         "models_names": ["bert"],
         "bert_model_name": "bert-custom-baseline",
         "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"+sys.argv[1]
-    }
+    },
     {
         "lm": "bert-custom-regularized",
         "label": "bert_custom_regularized",
@@ -66,6 +66,8 @@ def run_experiments(
     pp = pprint.PrettyPrinter(width=41, compact=True)
 
     all_Precision1 = []
+    all_Precision10 = []
+    all_mrr = []
     type_Precision1 = defaultdict(list)
     type_count = defaultdict(list)
 
@@ -114,12 +116,20 @@ def run_experiments(
             [model_type_name] = args.models_names
             model = build_model_by_name(model_type_name, args)
 
-        Precision1 = run_evaluation(args, shuffle_data=False, model=model)
+        Precision1, Precision10, MRR = run_evaluation(args, shuffle_data=False, model=model)
         print("P@1 : {}".format(Precision1), flush=True)
         all_Precision1.append(Precision1)
+        all_Precision10.append(Precision10)
+        all_mrr.append(MRR)
 
         results_file.write(
             "{},{}\n".format(relation["relation"], round(Precision1 * 100, 2))
+        )
+        results_file.write(
+            "{},{}\n".format(relation["relation"], round(Precision10 * 100, 2))
+        )
+        results_file.write(
+            "{},{}\n".format(relation["relation"], round(MRR* 100, 2))
         )
         results_file.flush()
 
@@ -129,7 +139,11 @@ def run_experiments(
             type_count[relation["type"]].append(len(data))
 
     mean_p1 = statistics.mean(all_Precision1)
+    mean_p10 = statistics.mean(all_Precision10)
+    mean_MRR = statistics.mean(all_mrr)
     print("@@@ {} - mean P@1: {}".format(input_param["label"], mean_p1))
+    print("@@@ {} - mean P@10: {}".format(input_param["label"], mean_p10))
+    print("@@@ {} - mean MRR: {}".format(input_param["label"], mean_MRR))
     results_file.close()
 
     for t, l in type_Precision1.items():
@@ -144,7 +158,7 @@ def run_experiments(
             flush=True,
         )
 
-    return mean_p1, all_Precision1
+    return (mean_p1, all_Precision1), (mean_p10, all_Precision10), (mean_MRR, all_mrr)
 
 
 def get_TREx_parameters(data_path_pre="/data/medioli/lama/data/"):
@@ -192,9 +206,16 @@ def get_Squad_parameters(data_path_pre="/data/medioli/lama/data/"):
 
 
 def run_all_LMs(parameters):
+    p1_list = []
+    p10_list = []
+    mrr_list = []
     for ip in LMs:
         print(ip["label"])
-        run_experiments(*parameters, input_param=ip, use_negated_probes=False)
+        p1, p10, mrr = run_experiments(*parameters, input_param=ip, use_negated_probes=False)
+        p1_list.append(p1)
+        p10_list.append(p10)
+        mrr_list.append(mrr)
+    return p1_list, p10_list, mrr_list
 
 
 if __name__ == "__main__":
@@ -213,4 +234,7 @@ if __name__ == "__main__":
 
     print("4. SQuAD")
     parameters = get_Squad_parameters()
-    run_all_LMs(parameters)
+    p1, p10, mrr = run_all_LMs(parameters)
+    print(p1)
+    print(p10)
+    print(mrr)
