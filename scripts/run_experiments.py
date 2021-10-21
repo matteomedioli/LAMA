@@ -49,7 +49,7 @@ def run_experiments(
             "bert_vocab_name": "vocab.txt",
             "batch_size": 32,
             "logdir": "output",
-            "full_logdir": "output/results/{}/{}".format(
+            "full_logdir": "/data/medioli/lama/output/results/{}/{}".format(
                 input_param["label"], relation["relation"]
             ),
             "lowercase": True,
