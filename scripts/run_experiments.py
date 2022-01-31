@@ -49,7 +49,7 @@ def run_experiments(
             "bert_vocab_name": "vocab.txt",
             "batch_size": 32,
             "logdir": "output",
-            "full_logdir": "/data/medioli/lama/output/results/{}/{}".format(
+            "full_logdir": "/ddn/medioli/lama/output/results/{}/{}".format(
                 input_param["label"], relation["relation"]
             ),
             "lowercase": True,
@@ -126,7 +126,7 @@ def run_experiments(
     return mean_p1, mean_p10, mean_MRR
 
 
-def get_TREx_parameters(data_path_pre="/data/medioli/lama/data/"):
+def get_TREx_parameters(data_path_pre="/dnn/medioli/lama/data/"):
     relations = load_file("{}relations.jsonl".format(data_path_pre))
     data_path_pre += "TREx/"
     data_path_post = ".jsonl"
@@ -151,19 +151,19 @@ def get_GoogleRE_parameters():
             "template_negated": "[X] did not die in [Y] .",
         },
     ]
-    data_path_pre = "/data/medioli/lama/data/Google_RE/"
+    data_path_pre = "/ddn/medioli/lama/data/Google_RE/"
     data_path_post = "_test.jsonl"
     return relations, data_path_pre, data_path_post
 
 
-def get_ConceptNet_parameters(data_path_pre="/data/medioli/lama/data/"):
+def get_ConceptNet_parameters(data_path_pre="/ddn/medioli/lama/data/"):
     relations = [{"relation": "test"}]
     data_path_pre += "ConceptNet/"
     data_path_post = ".jsonl"
     return relations, data_path_pre, data_path_post
 
 
-def get_Squad_parameters(data_path_pre="/data/medioli/lama/data/"):
+def get_Squad_parameters(data_path_pre="/ddn/medioli/lama/data/"):
     relations = [{"relation": "test"}]
     data_path_pre += "Squad/"
     data_path_post = ".jsonl"
