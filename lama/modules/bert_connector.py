@@ -101,6 +101,8 @@ class Bert(Base_Connector):
 
         # Load pre-trained model tokenizer (vocabulary)
         self.tokenizer = BertTokenizer.from_pretrained(dict_file)
+        print("Load Custom Freebase Tokenizer /ddn/medioli/freebase/tokenizer_with_entities.pt")
+        self.tokenizer = torch.load("/ddn/medioli/freebase/tokenizer_with_entities.pt")
 
         # original vocab
         self.map_indices = None
