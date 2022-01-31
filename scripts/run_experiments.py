@@ -185,13 +185,13 @@ def run_all_LMs(parameters):
             #    "bert_model_dir": None,
             #
             # },
-            {
-                "lm": "bert-custom-baseline",
-                "label": "bert_custom_baseline",
-                "models_names": ["bert"],
-                "bert_model_name": "bert-custom-baseline",
-                "bert_model_dir": "/ddn/medioli/models/mlm/bert_wikipedia_5_FREEBASE_GENNAIO_freebase/checkpoint-"
-            },
+            # {
+            #     "lm": "bert-custom-baseline",
+            #     "label": "bert_custom_baseline",
+            #     "models_names": ["bert"],
+            #     "bert_model_name": "bert-custom-baseline",
+            #     "bert_model_dir": "/ddn/medioli/models/mlm/bert_wikipedia_5_FREEBASE_GENNAIO_freebase/checkpoint-"
+            # },
             {
                 "lm": "bert-custom-regularized",
                 "label": "bert_custom_regularized",
