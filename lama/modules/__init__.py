@@ -5,10 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 #
 from .bert_connector import Bert
-from .elmo_connector import Elmo
-from .gpt_connector import GPT
-from .transformerxl_connector import TransformerXL
-from .roberta_connector import Roberta
+# from .elmo_connector import Elmo
+# from .gpt_connector import GPT
+# from .transformerxl_connector import TransformerXL
+# from .roberta_connector import Roberta
 
 
 def build_model_by_name(lm, args, verbose=True):
@@ -18,11 +18,11 @@ def build_model_by_name(lm, args, verbose=True):
     model's initializator.
     """
     MODEL_NAME_TO_CLASS = dict(
-        elmo=Elmo,
+        # elmo=Elmo,
         bert=Bert,
-        gpt=GPT,
-        transformerxl=TransformerXL,
-        roberta=Roberta
+        # gpt=GPT,
+        # transformerxl=TransformerXL,
+        # roberta=Roberta
     )
     if lm not in MODEL_NAME_TO_CLASS:
         raise ValueError("Unrecognized Language Model: %s." % lm)
