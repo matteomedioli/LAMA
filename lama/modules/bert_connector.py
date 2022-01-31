@@ -140,7 +140,7 @@ class Bert(Base_Connector):
     "transformers_version": "4.5.1",
     "type_vocab_size": 2,
     "use_cache": true,
-    "vocab_size": 30522
+    "vocab_size": 42933
 }""")
         if args.bert_model_dir is not None:
             print("Load Custom Model")
