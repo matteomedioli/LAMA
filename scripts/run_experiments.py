@@ -174,7 +174,7 @@ def run_all_LMs(parameters):
     p1_list = {}
     p10_list = {}
     mrr_list = {}
-    for i in tqdm(range(10000, 1095000, 10000)):
+    for i in tqdm(range(10000, 800000, 10000)):
         LMs = [
             # {
             #    # HuggingFace Baseline
@@ -190,14 +190,14 @@ def run_all_LMs(parameters):
                 "label": "bert_custom_baseline",
                 "models_names": ["bert"],
                 "bert_model_name": "bert-custom-baseline",
-                "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-"
+                "bert_model_dir": "/ddn/medioli/models/mlm/bert_wikipedia_5_FREEBASE_GENNAIO_freebase/checkpoint-"
             },
             {
                 "lm": "bert-custom-regularized",
                 "label": "bert_custom_regularized",
                 "models_names": ["bert"],
                 "bert_model_name": "bert-custom-regularized",
-                "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-"
+                "bert_model_dir": "/ddn/medioli/models/mlm/bert_wikipedia_5_FREEBASE_GENNAIO_freebase/checkpoint-"
             }
         ]
         for ip in LMs:
