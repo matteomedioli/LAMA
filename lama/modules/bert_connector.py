@@ -8,6 +8,8 @@ import torch
 import pytorch_pretrained_bert.tokenization as btok
 from pytorch_pretrained_bert import BertTokenizer, BertForMaskedLM, BasicTokenizer, BertModel
 import numpy as np
+from transformers import BertConfig
+
 from lama.modules.base_connector import *
 import torch.nn.functional as F
 from os import path
@@ -38,8 +40,11 @@ def load_custom_model(path, checkpoint_fldr_and_bin, regularized=False, device='
             if 'bert.' in k:
                 state_dict[k[5:]] = state_dict[k]
                 del state_dict[k]
+    config = BertConfig.from_pretrained("bert-base-cased", output_hidden_states=True)
+    print(config)
     return BertForMaskedLM.from_pretrained(
         pretrained_model_name_or_path=path,
+        config = config,
         state_dict=state_dict)
 
 class CustomBaseTokenizer(BasicTokenizer):
