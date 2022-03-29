@@ -217,7 +217,7 @@ def run_all_LMs(parameters):
         for lm in LMs:
             lm["bert_model_dir"] = lm["bert_model_dir"]+str(i)
             print(lm["label"])
-            p1, p10, mrr = run_experiments(*parameters, input_param=ip, use_negated_probes=False)
+            p1, p10, mrr = run_experiments(*parameters, input_param=lm, use_negated_probes=False)
             results[lm["bert_model_name"]]["mrr"].append(mrr)
             results[lm["bert_model_name"]]["p10"].append(p10)
             results[lm["bert_model_name"]]["p1"].append(p1)
