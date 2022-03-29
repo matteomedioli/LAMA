@@ -49,7 +49,7 @@ def run_experiments(
             "bert_vocab_name": "vocab.txt",
             "batch_size": 32,
             "logdir": "output",
-            "full_logdir": "/ddn/medioli/lama/output/results/{}/{}".format(
+            "full_logdir": "output/results/{}/{}".format(
                 input_param["label"], relation["relation"]
             ),
             "lowercase": True,
@@ -126,7 +126,7 @@ def run_experiments(
     return mean_p1, mean_p10, mean_MRR
 
 
-def get_TREx_parameters(data_path_pre="/dnn/medioli/lama/data/"):
+def get_TREx_parameters(data_path_pre="data/"):
     relations = load_file("{}relations.jsonl".format(data_path_pre))
     data_path_pre += "TREx/"
     data_path_post = ".jsonl"
@@ -151,19 +151,19 @@ def get_GoogleRE_parameters():
             "template_negated": "[X] did not die in [Y] .",
         },
     ]
-    data_path_pre = "/ddn/medioli/lama/data/Google_RE/"
+    data_path_pre = "data/Google_RE/"
     data_path_post = "_test.jsonl"
     return relations, data_path_pre, data_path_post
 
 
-def get_ConceptNet_parameters(data_path_pre="/ddn/medioli/lama/data/"):
+def get_ConceptNet_parameters(data_path_pre="data/"):
     relations = [{"relation": "test"}]
     data_path_pre += "ConceptNet/"
     data_path_post = ".jsonl"
     return relations, data_path_pre, data_path_post
 
 
-def get_Squad_parameters(data_path_pre="/ddn/medioli/lama/data/"):
+def get_Squad_parameters(data_path_pre="/ddn/medioli/lama/data/"): #/data/medioli/lama/data/
     relations = [{"relation": "test"}]
     data_path_pre += "Squad/"
     data_path_post = ".jsonl"
@@ -171,68 +171,187 @@ def get_Squad_parameters(data_path_pre="/ddn/medioli/lama/data/"):
 
 
 def run_all_LMs(parameters):
-    p1_list = {}
-    p10_list = {}
-    mrr_list = {}
+    results={"baseline":{"mrr":[], "p10":[], "p1":[]},
+            "wordnet":{"mrr":[], "p10":[], "p1":[]},
+            "freebase":{"mrr":[], "p10":[], "p1":[]}}
     for i in tqdm(range(10000, 800000, 10000)):
         LMs = [
-            # {
+            #{
             #    # HuggingFace Baseline
             #    "lm": "bert",
             #    "label": "bert_base_uncased",
             #    "models_names": ["bert"],
             #    "bert_model_name": "bert-base-uncased",
             #    "bert_model_dir": None,
-            #
-            # },
-            # {
-            #     "lm": "bert-custom-baseline",
-            #     "label": "bert_custom_baseline",
-            #     "models_names": ["bert"],
-            #     "bert_model_name": "bert-custom-baseline",
-            #     "bert_model_dir": "/ddn/medioli/models/mlm/bert_wikipedia_5_FREEBASE_GENNAIO_freebase/checkpoint-"
-            # },
+            #    "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+            #    "bert_vocab_name": "vocab.txt"
+            #},
+            {
+                "lm": "bert-custom-baseline",
+                "label": "bert_custom_baseline",
+                "models_names": ["bert"],
+                "bert_model_name": "baseline",
+                "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_BASELINE_WITH_GAT_OCTOBER/checkpoint-",
+                "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+                "bert_vocab_name": "vocab.txt",
+            },
             {
                 "lm": "bert-custom-regularized",
                 "label": "bert_custom_regularized",
                 "models_names": ["bert"],
-                "bert_model_name": "bert-custom-regularized",
-                "bert_model_dir": "/ddn/medioli/models/mlm/bert_wikipedia_5_FREEBASE_GENNAIO_freebase/checkpoint-"
+                "bert_model_name": "wordnet",
+                "bert_model_dir": "/data/medioli/models/mlm/bert_wikipedia_5_SECOND_TEST_WITH_GAT_FIX_64/checkpoint-",
+                "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+                "bert_vocab_name": "vocab.txt"
+            },
+            {
+                "lm": "bert-custom-regularized",
+                "label": "bert_custom_regularized",
+                "models_names": ["bert"],
+                "bert_model_name": "freebase",
+                "bert_model_dir": "/ddn/medioli/models/mlm/bert_wikipedia_5_FREEBASE_GENNAIO_freebase/checkpoint-",
+                "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+                "bert_vocab_name": "vocab.txt"
             }
         ]
-        for ip in LMs:
-            ip["bert_model_dir"] = ip["bert_model_dir"]+str(i)
-            print(ip["label"])
-            p1_list[ip["label"]] = []
-            p10_list[ip["label"]] = []
-            mrr_list[ip["label"]] = []
+        for lm in LMs:
+            lm["bert_model_dir"] = lm["bert_model_dir"]+str(i)
+            print(lm["label"])
             p1, p10, mrr = run_experiments(*parameters, input_param=ip, use_negated_probes=False)
-            p1_list[ip["label"]].append(p1)
-            p10_list[ip["label"]].append(p10)
-            mrr_list[ip["label"]].append(mrr)
-    return p1_list, p10_list, mrr_list
+            results[lm["bert_model_name"]]["mrr"].append(mrr)
+            results[lm["bert_model_name"]]["p10"].append(p10)
+            results[lm["bert_model_name"]]["p1"].append(p1)
+
+    with open('results_febbraio.json', 'w') as fp:
+        json.dump(results, fp)
 
 
 if __name__ == "__main__":
 
-    #print("1. Google-RE")
-    #parameters = get_GoogleRE_parameters()
-    #run_all_LMs(parameters)
+    # print("1. Google-RE")
+    # parameters = get_GoogleRE_parameters()
+    # run_all_LMs(parameters)
 
     #print("2. T-REx")
     #parameters = get_TREx_parameters()
     #run_all_LMs(parameters)
 
-    #print("3. ConceptNet")
-    #parameters = get_ConceptNet_parameters()
-    #run_all_LMs(parameters)
+    # print("3. ConceptNet")
+    # parameters = get_ConceptNet_parameters()
+    # run_all_LMs(parameters)
 
     print("4. SQuAD")
     parameters = get_Squad_parameters()
-    p1, p10, mrr = run_all_LMs(parameters)
-    with open('result_p1.json', 'w') as fp:
-        json.dump(p1, fp)
-    with open('result_p10.json', 'w') as fp:
-        json.dump(p10, fp)
-    with open('result_mrr.json', 'w') as fp:
-        json.dump(mrr, fp)
+    run_all_LMs(parameters)
+
+
+
+
+'''
+LMs = [
+        {
+            # HuggingFace Baseline
+            "lm": "bert",
+            "label": "bert_base_uncased",
+            "models_names": ["bert"],
+            "bert_model_name": "bert-base-uncased",
+            "bert_model_dir": None,
+            "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+            "bert_vocab_name": "vocab.txt"
+        },
+        {
+            "lm": "bert-custom-baseline",
+            "label": "bert_custom_baseline",
+            "models_names": ["bert"],
+            "bert_model_name": "bert-custom-baseline",
+            "bert_model_dir": "/home/med/Scrivania/DATA-SERVER/language models/bert_baseline_815000",
+            "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+            "bert_vocab_name": "vocab.txt",
+        },
+        {
+            "lm": "bert-custom-regularized",
+            "label": "bert_custom_regularized",
+            "models_names": ["bert"],
+            "bert_model_name": "bert-custom-regularized",
+            "bert_model_dir": "/home/med/Scrivania/DATA-SERVER/language models/bert_wordnet_815000",
+            "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+            "bert_vocab_name": "vocab.txt"
+        },
+        {
+            "lm": "bert-custom-regularized",
+            "label": "bert_custom_regularized",
+            "models_names": ["bert"],
+            "bert_model_name": "bert-custom-regularized",
+            "bert_model_dir": "/home/med/Scrivania/DATA-SERVER/language models/bert_freebase_815000",
+            "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+            "bert_vocab_name": "vocab.txt"
+        }
+    ]
+MEN_top10 = [
+    ("sun", "sunlight"),
+    ("automobile", "car"),
+    ("river", "water"),
+    ("stairs", "staircase"),
+    ("morning", "sunrise"),
+    ("rain", "storm"),
+    ("cat", "kittens"),
+    ("dance", "dancers"),
+    ("camera", "photography"),
+    ("cat", "feline")]
+
+MEN_lowest10 = [
+    ("posted", "tulip"),
+    ("grave", "hat"),
+    ("apple", "cute"),
+    ("angel", "gasoline"),
+    ("giraffe", "harbor"),
+    ("feathers", "truck"),
+    ("festival", "whiskers"),
+    ("muscle", "tulip"),
+    ("bikini", "pizza"),
+    ("bakery", "zebra")]
+
+for lm in LMs:
+    bert = load_model(lm)
+    ------------------------------------------------------------
+    def load_model(
+        input_param={
+            "lm": "bert",
+            "label": "bert_large",
+            "models_names": ["bert"],
+            "bert_model_name": "bert-large-cased",
+            "bert_model_dir": "pre-trained_language_models/bert/cased_L-24_H-1024_A-16",
+        },
+):
+    model = None
+
+    PARAMETERS = {
+        "dataset_filename": "{}{}{}".format(
+            data_path_pre, relation["relation"], data_path_post
+        ),
+        "common_vocab_filename": "pre-trained_language_models/common_vocab_lowercased.txt",
+        "template": "",
+        "bert_vocab_name": "vocab.txt",
+        "batch_size": 32,
+        "logdir": "output",
+        "full_logdir": "output/results/{}/{}".format(
+            input_param["label"], relation["relation"]
+        ),
+        "lowercase": True,
+        "max_sentence_length": 100,
+        "threads": -1,
+        "interactive": False,
+        "use_negated_probes": use_negated_probes,
+    }
+    
+    PARAMETERS = {}
+    PARAMETERS.update(input_param)
+    print(PARAMETERS)
+
+    args = argparse.Namespace(**PARAMETERS)
+
+    if model is None:
+        [model_type_name] = args.models_names
+        model = build_model_by_name(model_type_name, args)
+    return model
+'''
